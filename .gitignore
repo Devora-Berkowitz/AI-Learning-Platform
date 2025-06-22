@@ -1,8 +1,83 @@
-node_modules
-.env
+# Prisma
 /generated/prisma
-dist
-coverage
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Diagnostic reports
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+lib-cov/
+coverage/
+*.lcov
+.nyc_output/
+
+# Build cache and temp files
+.grunt/
+bower_components/
+.lock-wscript
+build/Release/
+node_modules/
+jspm_packages/
+web_modules/
+*.tsbuildinfo
+.npm/
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# REPL history
+.node_repl_history
+
+# Output of npm pack
+*.tgz
+
+# Yarn files
+.yarn-integrity
+.yarn/
+.pnp.*
+
+# Environment variables
+.env
+.env.development.local
+.env.test.local
+.env.production.local
 .env.local
-.env.development
-.env.production
+
+# Bundlers
+.cache/
+.parcel-cache/
+
+# Framework builds
+.next/
+out/
+.nuxt/
+dist/
+.vuepress/dist/
+.temp/
+**/.vitepress/dist/
+**/.vitepress/cache/
+.docusaurus/
+
+# Miscellaneous
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.vscode-test/
