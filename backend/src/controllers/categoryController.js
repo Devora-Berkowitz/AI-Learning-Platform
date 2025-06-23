@@ -18,14 +18,8 @@ export const getSubCategories = async (req, res) => {
     }
 
     const subCategories = await prisma.subCategory.findMany({
-<<<<<<< HEAD
       where: { categoryId: Number(id) },
     });
-
-=======
-      where: { categoryId: Number(id) }
-    });
->>>>>>> 4f118f4d081d3bd1d04e9f56afc82f4478fd99fb
     res.json(subCategories);
   } catch (error) {
     res.status(500).json({ error: 'Failed to get subcategories' });
