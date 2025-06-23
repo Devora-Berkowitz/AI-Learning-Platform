@@ -1,15 +1,23 @@
+<<<<<<< HEAD
 import prisma from '../prismaClient.js';
+=======
+import prisma from '../prisma/client.js';
+>>>>>>> 4f118f4d081d3bd1d04e9f56afc82f4478fd99fb
 import { getOpenAIResponse } from '../services/openAiService.js';
 
 export const createPrompt = async (req, res) => {
   try {
+<<<<<<< HEAD
     console.log("REQ BODY:", req.body);
+=======
+>>>>>>> 4f118f4d081d3bd1d04e9f56afc82f4478fd99fb
     const { userId, categoryId, subCategoryId, prompt } = req.body;
 
     if (!userId || !categoryId || !subCategoryId || !prompt) {
       return res.status(400).json({ error: 'All fields are required: userId, categoryId, subCategoryId, prompt' });
     }
 
+<<<<<<< HEAD
     // 🟡 תיקון המרה מ-string ל-int
     const parsedCategoryId = parseInt(categoryId, 10);
     const parsedSubCategoryId = parseInt(subCategoryId, 10);
@@ -28,10 +36,17 @@ export const createPrompt = async (req, res) => {
         prompt, 
         response 
       }
+=======
+    const response = await getOpenAIResponse(prompt);
+
+    const savedPrompt = await prisma.prompt.create({
+      data: { userId, categoryId, subCategoryId, prompt, response }
+>>>>>>> 4f118f4d081d3bd1d04e9f56afc82f4478fd99fb
     });
 
     res.json(savedPrompt);
   } catch (error) {
+<<<<<<< HEAD
     console.error('Error creating prompt:', error);
     res.status(500).json({ error: 'Failed to create prompt' });
   }
@@ -67,3 +82,8 @@ export const getAllPrompts = async (req, res) => {
     res.status(500).json({ error: 'Failed to get all prompts' });
   }
 };
+=======
+    res.status(500).json({ error: 'Failed to create prompt' });
+  }
+};
+>>>>>>> 4f118f4d081d3bd1d04e9f56afc82f4478fd99fb
