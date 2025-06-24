@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -40,43 +40,36 @@ const AdminDashboard: React.FC = () => {
     (prompt.sub_category_name?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   );
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
-  };
 
-  const getUserPromptCount = (userId: string) => {
-    return prompts.filter(p => p.user_id === userId).length;
-  };
+  const getUserPromptCount = (userId: string) =>
+    prompts.filter(p => p.user_id === userId).length;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100">
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/')}
-                className="flex items-center space-x-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back</span>
-              </Button>
-              <Users className="h-8 w-8 text-purple-600" />
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-            </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="flex justify-between items-center py-4">
+          <div className="flex items-center space-x-3 ml-[-6rem]">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center space-x-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back</span>
+            </Button>
+            <Users className="h-8 w-8 text-purple-600" />
+            <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
           </div>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         {/* Stat cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <Card>
@@ -192,9 +185,7 @@ const AdminDashboard: React.FC = () => {
                         <span><strong>User Phone:</strong> {prompt.user_phone}</span>
                         <span><strong>Category:</strong> {prompt.category_name}</span>
                         <span><strong>Subcategory:</strong> {prompt.sub_category_name}</span>
-                        <span className="text-xs text-gray-500">
-                          {formatDate(prompt.created_at)}
-                        </span>
+                        <span className="text-xs text-gray-500">{formatDate(prompt.created_at)}</span>
                       </CardDescription>
                     </div>
                   </div>
@@ -214,4 +205,3 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
-

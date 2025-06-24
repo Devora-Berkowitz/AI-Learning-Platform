@@ -3,24 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Users, Brain, Zap } from 'lucide-react';
-import { User } from '@/types/types';
-import Header from './Header';
 
 const Index = () => {
   const navigate = useNavigate();
   const storedUser = localStorage.getItem('learning_platform_current_user');
   const user = storedUser ? JSON.parse(storedUser) : null;
 
-  const handleLogout = () => {
-    localStorage.removeItem('learning_platform_current_user');
-    navigate('/');
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {user && (
-        <Header userName={user.name} onLogout={handleLogout} />
-      )}
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20">
@@ -33,9 +23,7 @@ const Index = () => {
             </div>
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
               Learn Anything with
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                {' '}AI-Powered
-              </span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> AI-Powered</span>
               <br />
               Personalized Lessons
             </h1>
@@ -60,16 +48,17 @@ const Index = () => {
               >
                 Start Learning Now
               </Button>
-
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-lg px-8 py-3"
-                onClick={() => navigate('/admin')}
-              >
-                <Users className="h-5 w-5 mr-2" />
-                Admin Dashboard
-              </Button>
+              {user?.role === 'admin' && (
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-lg px-8 py-3"
+                  onClick={() => navigate("/admin")}
+                >
+                  <Users className="h-5 w-5 mr-2" />
+                  Admin Dashboard
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -145,9 +134,9 @@ const Index = () => {
             size="lg"
             variant="secondary"
             className="text-lg px-8 py-3 bg-white text-blue-600 hover:bg-gray-100"
-            onClick={() => navigate('/login')}
+            onClick={() => navigate('/about')}
           >
-            Get Started Free
+            Learn More About Us
           </Button>
         </div>
       </div>
@@ -165,4 +154,5 @@ const Index = () => {
 };
 
 export default Index;
+
 

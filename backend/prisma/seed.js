@@ -1,6 +1,12 @@
 import prisma from '../src/prismaClient.js';
 
 const main = async () => {
+  // מחיקת נתונים קיימים כדי למנוע כפילויות
+  await prisma.subCategory.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.user.deleteMany();
+
+  // הכנסת קטגוריות
   await prisma.category.createMany({
     data: [
       { id: 1, name: 'Science' },
@@ -11,6 +17,7 @@ const main = async () => {
     ],
   });
 
+  // הכנסת תתי קטגוריות
   await prisma.subCategory.createMany({
     data: [
       { id: 1, name: 'Physics', categoryId: 1 },
@@ -29,10 +36,21 @@ const main = async () => {
       { id: 14, name: 'Fiction', categoryId: 5 },
     ],
   });
+
+  // הכנסת מנהל
+  await prisma.user.create({
+    data: {
+      id: '123456789',
+      name: 'Admin User',
+      phone: '0501234567',
+      role: 'admin',
+    },
+  });
 };
 
+// קריאה לפונקציה הראשית
 main()
-  .catch(e => {
+  .catch((e) => {
     console.error(e);
     process.exit(1);
   })

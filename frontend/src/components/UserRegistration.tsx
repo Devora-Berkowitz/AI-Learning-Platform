@@ -7,20 +7,27 @@ import { Label } from '@/components/ui/label';
 import { createUser } from '@/api/api';
 import { useToast } from '@/hooks/use-toast';
 
-const UserRegistration: React.FC = () => {
+const UserRegistration = () => {
   const [name, setName] = useState('');
   const [idNumber, setIdNumber] = useState('');
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({ name: '', idNumber: '', phone: '' });
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const validate = () => {
+    const newErrors = { name: '', idNumber: '', phone: '' };
+    if (!name.trim()) newErrors.name = 'Name is required';
+    if (!/^[0-9]{9,}$/.test(idNumber.trim())) newErrors.idNumber = 'ID must be numeric and at least 9 digits';
+    if (!/^[0-9]{9,10}$/.test(phone.trim())) newErrors.phone = 'Phone must be numeric and 9-10 digits';
+    setErrors(newErrors);
+    return !newErrors.name && !newErrors.idNumber && !newErrors.phone;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim() || !idNumber.trim() || !phone.trim()) {
-      toast({ title: "Error", description: "Please fill in all fields", variant: "destructive" });
-      return;
-    }
+    if (!validate()) return;
 
     setIsLoading(true);
     try {
@@ -28,7 +35,7 @@ const UserRegistration: React.FC = () => {
       localStorage.setItem('learning_platform_current_user', JSON.stringify(user));
       toast({ title: "Welcome!", description: "Account created successfully" });
       navigate('/learning');
-    } catch (error) {
+    } catch {
       toast({ title: "Error", description: "Failed to create account.", variant: "destructive" });
     } finally {
       setIsLoading(false);
@@ -46,27 +53,18 @@ const UserRegistration: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label>Full Name</Label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
+              <Input value={name} onChange={(e) => setName(e.target.value)} />
+              {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
             </div>
             <div>
               <Label>ID Number</Label>
-              <Input
-                value={idNumber}
-                onChange={(e) => setIdNumber(e.target.value)}
-                required
-              />
+              <Input value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+              {errors.idNumber && <p className="text-red-500 text-sm">{errors.idNumber}</p>}
             </div>
             <div>
               <Label>Phone Number</Label>
-              <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
+              <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+              {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
             </div>
             <Button
               type="submit"

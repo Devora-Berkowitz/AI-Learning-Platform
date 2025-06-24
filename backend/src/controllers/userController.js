@@ -1,5 +1,4 @@
 import prisma from '../prismaClient.js';
-
 export const createUser = async (req, res) => {
   const { id, name, phone } = req.body;
 
@@ -9,11 +8,16 @@ export const createUser = async (req, res) => {
 
   try {
     const user = await prisma.user.create({
-      data: { id, name, phone },
+      data: {
+        id,
+        name,
+        phone,
+        role: 'user' 
+      },
     });
     res.json(user);
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error(error);
     res.status(500).json({ error: 'Failed to create user' });
   }
 };

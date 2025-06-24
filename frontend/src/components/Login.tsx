@@ -7,41 +7,49 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { getUsers } from '@/api/api';
 import { User } from '@/types/types';
+import { useUser } from '../components/UserContext'; 
 
-const Login: React.FC = () => {
+const Login = () => {
   const [idNumber, setIdNumber] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { setUser } = useUser(); 
+
+  const validate = () => {
+    if (!/^[0-9]{9,}$/.test(idNumber.trim())) {
+      setError('ID must be numeric and at least 9 digits');
+      return false;
+    }
+    setError('');
+    return true;
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) return;
+
     setLoading(true);
     try {
       const users: User[] = await getUsers();
-      const foundUser = users.find(user => user.id === idNumber);
+      const foundUser = users.find(user => user.id === idNumber.trim());
 
       if (foundUser) {
         localStorage.setItem('learning_platform_current_user', JSON.stringify(foundUser));
+        setUser(foundUser); 
         toast({ title: 'Welcome!', description: `Hello ${foundUser.name}` });
-        if (foundUser.isAdmin) {
+
+        if (foundUser.role === 'admin') {
           navigate('/admin');
         } else {
           navigate('/learning');
         }
       } else {
-        toast({
-          title: 'Login Failed',
-          description: 'ID number not found. Please register first.',
-          variant: 'destructive'
-        });
+        toast({ title: 'Login Failed', description: 'ID number not found. Please register first.', variant: 'destructive' });
       }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Server error. Please try again later.',
-        variant: 'destructive'
-      });
+    } catch {
+      toast({ title: 'Error', description: 'Server error. Please try again later.', variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -58,11 +66,8 @@ const Login: React.FC = () => {
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <Label>ID Number</Label>
-              <Input
-                value={idNumber}
-                onChange={(e) => setIdNumber(e.target.value)}
-                required
-              />
+              <Input value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+              {error && <p className="text-red-500 text-sm">{error}</p>}
             </div>
             <Button
               type="submit"
@@ -73,7 +78,7 @@ const Login: React.FC = () => {
             </Button>
             <div className="text-center mt-4">
               <span>Don't have an account? </span>
-              <Button 
+              <Button
                 type="button"
                 variant="link"
                 className="text-blue-600 hover:underline p-0"

@@ -8,13 +8,10 @@ generator client {
 }
 
 model User {
-<<<<<<< HEAD
   id       String  @id
-=======
-  id       Int      @id @default(autoincrement())
->>>>>>> 4f118f4d081d3bd1d04e9f56afc82f4478fd99fb
   name     String
   phone    String
+  role     String    @default("user") 
   prompts  Prompt[]
 }
 
@@ -22,11 +19,7 @@ model Category {
   id             Int            @id @default(autoincrement())
   name           String
   subCategories  SubCategory[]
-<<<<<<< HEAD
   prompts        Prompt[]
-=======
-  prompts        Prompt[] // 👈 נוסף לתיקון השגיאה
->>>>>>> 4f118f4d081d3bd1d04e9f56afc82f4478fd99fb
 }
 
 model SubCategory {
@@ -40,11 +33,7 @@ model SubCategory {
 model Prompt {
   id            Int          @id @default(autoincrement())
   user          User         @relation(fields: [userId], references: [id])
-<<<<<<< HEAD
   userId        String
-=======
-  userId        Int
->>>>>>> 4f118f4d081d3bd1d04e9f56afc82f4478fd99fb
   category      Category     @relation(fields: [categoryId], references: [id])
   categoryId    Int
   subCategory   SubCategory  @relation(fields: [subCategoryId], references: [id])

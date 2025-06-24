@@ -3,6 +3,7 @@ export interface User {
   name: string;
   phone: string;
   idNumber: string;
+  role: string; 
   created_at: string;
   isAdmin?: boolean;
 }
