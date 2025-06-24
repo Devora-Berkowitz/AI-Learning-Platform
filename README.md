@@ -1,5 +1,9 @@
 README
 
+I implemented this project with a strong focus on clean architecture, maintainability, and scalability. The backend is built with Node.js and Express, utilizing PostgreSQL as the relational database, ensuring well-structured data relationships between users, categories, and prompts. The integration with the OpenAI API allows for seamless lesson generation, and the use of an ORM guarantees maintainability and future extensibility.
+
+On the frontend, I chose React to deliver a clean and user-friendly interface that allows learners to register, pick their topics of interest, send prompts, and review their lesson history. An admin panel provides an overview of all user activity and prompt history. The separation of concerns between services, routes, and database layers, combined with best practices in error handling and configuration, makes this application a solid foundation for further expansion and deployment in a production environment.
+
 1. Project Technologies
 
 Backend: Node.js, Express.js, Prisma ORM, PostgreSQL

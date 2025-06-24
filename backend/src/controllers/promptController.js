@@ -38,7 +38,7 @@ export const createPrompt = async (req, res) => {
 
 export const getAllPrompts = async (req, res) => {
   try {
-    const userId = req.user.userId || req.user.id; // לבדוק אם יש id או userId
+    const userId = req.user.userId || req.user.id;
     const userRole = req.user.role;
 
     let prompts;
