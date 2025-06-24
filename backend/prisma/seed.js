@@ -1,11 +1,6 @@
 import prisma from '../src/prismaClient.js';
 
 const main = async () => {
-  // מחיקת נתונים קיימים כדי למנוע כפילויות
-  await prisma.subCategory.deleteMany();
-  await prisma.category.deleteMany();
-  await prisma.user.deleteMany();
-
   // הכנסת קטגוריות
   await prisma.category.createMany({
     data: [

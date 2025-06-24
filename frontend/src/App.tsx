@@ -8,12 +8,12 @@ import Index from '@/pages/Index';
 import About from '@/pages/AboutPage';
 import Layout from '@/components/Layout';
 import NotFound from '@/pages/NotFound';
-import ScrollToTop from '@/components/ScrollToTop'; // הוספה
+import ScrollToTop from '@/components/ScrollToTop'; 
 
 const App = () => {
   return (
     <>
-      <ScrollToTop /> {/* גלילה תמידית למעלה בעת מעבר דפים */}
+      <ScrollToTop /> 
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Index />} />

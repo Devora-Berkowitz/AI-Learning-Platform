@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const AboutPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 via-blue-200 to-blue-300 flex flex-col items-center py-12 px-4 relative">
-      
+
       <div className="absolute top-4 left-4">
         <Button
           variant="ghost"

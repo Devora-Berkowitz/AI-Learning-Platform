@@ -14,6 +14,9 @@ const AdminDashboard: React.FC = () => {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState<'users' | 'prompts'>('users');
+  const [currentPageUsers, setCurrentPageUsers] = useState(1);
+  const [currentPagePrompts, setCurrentPagePrompts] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,12 +36,17 @@ const AdminDashboard: React.FC = () => {
     (user.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (user.idNumber || '').includes(searchTerm)
   );
-
   const filteredPrompts = prompts.filter(prompt =>
     (prompt.prompt?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (prompt.category_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
     (prompt.sub_category_name?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   );
+
+  const totalPagesUsers = Math.ceil(filteredUsers.length / itemsPerPage);
+  const totalPagesPrompts = Math.ceil(filteredPrompts.length / itemsPerPage);
+
+  const paginatedUsers = filteredUsers.slice((currentPageUsers - 1) * itemsPerPage, currentPageUsers * itemsPerPage);
+  const paginatedPrompts = filteredPrompts.slice((currentPagePrompts - 1) * itemsPerPage, currentPagePrompts * itemsPerPage);
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString('en-US', {
@@ -48,12 +56,10 @@ const AdminDashboard: React.FC = () => {
       hour: '2-digit',
       minute: '2-digit',
     });
-
-  const getUserPromptCount = (userId: string) =>
-    prompts.filter(p => p.user_id === userId).length;
+  const getUserPromptCount = (userId: string) => prompts.filter(p => p.user_id === userId).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-3 ml-[-6rem]">
@@ -70,43 +76,34 @@ const AdminDashboard: React.FC = () => {
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
           </div>
         </div>
+
         {/* Stat cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Users</p>
-                  <p className="text-3xl font-bold text-gray-900">{users.length}</p>
-                </div>
-                <Users className="h-8 w-8 text-blue-600" />
+            <CardContent className="p-6 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Users</p>
+                <p className="text-3xl font-bold text-gray-900">{users.length}</p>
               </div>
+              <Users className="h-8 w-8 text-blue-600" />
             </CardContent>
           </Card>
-
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Lessons</p>
-                  <p className="text-3xl font-bold text-gray-900">{prompts.length}</p>
-                </div>
-                <BookOpen className="h-8 w-8 text-green-600" />
+            <CardContent className="p-6 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Lessons</p>
+                <p className="text-3xl font-bold text-gray-900">{prompts.length}</p>
               </div>
+              <BookOpen className="h-8 w-8 text-green-600" />
             </CardContent>
           </Card>
-
           <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Avg Lessons/User</p>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {users.length > 0 ? (prompts.length / users.length).toFixed(1) : '0'}
-                  </p>
-                </div>
-                <BookOpen className="h-8 w-8 text-purple-600" />
+            <CardContent className="p-6 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Avg Lessons/User</p>
+                <p className="text-3xl font-bold text-gray-900">{users.length > 0 ? (prompts.length / users.length).toFixed(1) : '0'}</p>
               </div>
+              <BookOpen className="h-8 w-8 text-purple-600" />
             </CardContent>
           </Card>
         </div>
@@ -149,31 +146,50 @@ const AdminDashboard: React.FC = () => {
         {/* Users list */}
         {activeTab === 'users' && (
           <div className="space-y-4">
-            {filteredUsers.map(user => (
+            {paginatedUsers.map(user => (
               <Card key={user.id}>
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
-                      <p className="text-gray-600">ID: {user.id}</p>
-                      <p className="text-gray-600">Phone: {user.phone}</p>
-                    </div>
-                    <div className="text-right">
-                      <Badge variant="secondary">
-                        {getUserPromptCount(user.id)} lessons
-                      </Badge>
-                    </div>
+                <CardContent className="p-6 flex justify-between items-start">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
+                    <p className="text-gray-600">ID: {user.id}</p>
+                    <p className="text-gray-600">Phone: {user.phone}</p>
+                  </div>
+                  <div className="text-right">
+                    <Badge variant="secondary">{getUserPromptCount(user.id)} lessons</Badge>
                   </div>
                 </CardContent>
               </Card>
             ))}
+
+            {/* Pagination for Users */}
+            <div className="flex justify-center items-center space-x-3 mt-4">
+              <Button
+                variant="outline"
+                className="border border-blue-600 text-blue-600 rounded-full w-16 h-8 hover:bg-blue-50"
+                onClick={() => setCurrentPageUsers(prev => Math.max(prev - 1, 1))}
+                disabled={currentPageUsers === 1}
+              >
+                Prev
+              </Button>
+              <div className="border border-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-blue-600 font-bold">
+                {currentPageUsers}
+              </div>
+              <Button
+                variant="outline"
+                className="border border-blue-600 text-blue-600 rounded-full w-16 h-8 hover:bg-blue-50"
+                onClick={() => setCurrentPageUsers(prev => Math.min(prev + 1, totalPagesUsers))}
+                disabled={currentPageUsers === totalPagesUsers}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
 
         {/* Prompts list */}
         {activeTab === 'prompts' && (
           <div className="space-y-4">
-            {filteredPrompts.map(prompt => (
+            {paginatedPrompts.map(prompt => (
               <Card key={prompt.id}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
@@ -197,6 +213,29 @@ const AdminDashboard: React.FC = () => {
                 </CardContent>
               </Card>
             ))}
+
+            {/* Pagination for Prompts */}
+            <div className="flex justify-center items-center space-x-3 mt-4">
+              <Button
+                variant="outline"
+                className="border border-blue-600 text-blue-600 rounded-full w-16 h-8 hover:bg-blue-50"
+                onClick={() => setCurrentPagePrompts(prev => Math.max(prev - 1, 1))}
+                disabled={currentPagePrompts === 1}
+              >
+                Prev
+              </Button>
+              <div className="border border-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-blue-600 font-bold">
+                {currentPagePrompts}
+              </div>
+              <Button
+                variant="outline"
+                className="border border-blue-600 text-blue-600 rounded-full w-16 h-8 hover:bg-blue-50"
+                onClick={() => setCurrentPagePrompts(prev => Math.min(prev + 1, totalPagesPrompts))}
+                disabled={currentPagePrompts === totalPagesPrompts}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
       </div>
@@ -205,3 +244,5 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
+
+

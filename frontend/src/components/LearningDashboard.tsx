@@ -192,11 +192,12 @@ const LearningDashboard: React.FC = () => {
               <Card key={p.id}>
                 <CardHeader>
                   <CardTitle>{p.prompt}</CardTitle>
-                  <CardDescription>
+                  {/* שינינו מ-CardDescription ל-div עם קלאסים דומים */}
+                  <div className="flex space-x-2 items-center text-sm text-gray-500 mt-1">
                     <Badge>{p.category_name}</Badge>
                     <Badge>{p.sub_category_name}</Badge>
-                    <span className="text-xs text-gray-500">{formatDate(p.created_at)}</span>
-                  </CardDescription>
+                    <span className="text-xs">{formatDate(p.created_at)}</span>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="whitespace-pre-wrap max-h-40 overflow-y-auto text-gray-700">{p.response}</div>

@@ -5,9 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { getUsers } from '@/api/api';
-import { User } from '@/types/types';
-import { useUser } from '../components/UserContext'; 
+import { loginUser } from '@/api/api';
+import { useUser } from '../components/UserContext';
 
 const Login = () => {
   const [idNumber, setIdNumber] = useState('');
@@ -15,7 +14,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { setUser } = useUser(); 
+  const { setUser } = useUser();
 
   const validate = () => {
     if (!/^[0-9]{9,}$/.test(idNumber.trim())) {
@@ -32,21 +31,18 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const users: User[] = await getUsers();
-      const foundUser = users.find(user => user.id === idNumber.trim());
+      const { user, token } = await loginUser(idNumber.trim());
 
-      if (foundUser) {
-        localStorage.setItem('learning_platform_current_user', JSON.stringify(foundUser));
-        setUser(foundUser); 
-        toast({ title: 'Welcome!', description: `Hello ${foundUser.name}` });
+      localStorage.setItem('learning_platform_current_user', JSON.stringify(user));
+      localStorage.setItem('learning_platform_token', token);
+      setUser(user);
 
-        if (foundUser.role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/learning');
-        }
+      toast({ title: 'Welcome!', description: `Hello ${user.name}` });
+
+      if (user.role === 'admin') {
+        navigate('/admin');
       } else {
-        toast({ title: 'Login Failed', description: 'ID number not found. Please register first.', variant: 'destructive' });
+        navigate('/learning');
       }
     } catch {
       toast({ title: 'Error', description: 'Server error. Please try again later.', variant: 'destructive' });

@@ -38,13 +38,21 @@ export const createPrompt = async (req, res) => {
 
 export const getAllPrompts = async (req, res) => {
   try {
-    const prompts = await prisma.prompt.findMany({
-      include: {
-        user: true,
-        category: true,
-        subCategory: true,
-      },
-    });
+    const userId = req.user.userId || req.user.id; // לבדוק אם יש id או userId
+    const userRole = req.user.role;
+
+    let prompts;
+
+    if (userRole === 'admin') {
+      prompts = await prisma.prompt.findMany({
+        include: { user: true, category: true, subCategory: true },
+      });
+    } else {
+      prompts = await prisma.prompt.findMany({
+        where: { userId: userId },
+        include: { user: true, category: true, subCategory: true },
+      });
+    }
 
     const processedPrompts = prompts.map(p => ({
       id: p.id,

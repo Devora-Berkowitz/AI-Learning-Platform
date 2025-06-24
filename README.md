@@ -21,6 +21,9 @@ src/
 │ ├── categoryController.js — Handles categories logic
 │ ├── promptController.js — Handles prompts logic
 │
+├── middleware/
+│ ├── authMiddleware.js — Middleware for authentication, verifies JWT tokens & user authorization
+│
 ├── routes/
 │ ├── userRoutes.js — Defines API endpoints for users
 │ ├── categoryRoutes.js — Defines API endpoints for categories
@@ -29,9 +32,16 @@ src/
 ├── services/
 │ ├── openAiService.js — Handles OpenAI communication logic (or mocks)
 │
-├── prismaClient.js — Prisma connection to PostgreSQL
-├── app.js — Express app configuration and middleware setup
-└── server.js — Server entry point
+├── prismaClient.js — Prisma connection to PostgreSQL, exports configured Prisma client
+├── app.js — Express app configuration and middleware setup, connects routes and middleware
+├── server.js — Server entry point, starts Express server and listens on specified port
+├── swaggerOptions.js — Configuration for Swagger/OpenAPI documentation generation
+│
+├── tests/
+│ ├── categories.test.js — Unit and integration tests for categories endpoints
+│ ├── prompts.test.js — Unit and integration tests for prompts endpoints
+│ ├── user.test.js — Unit and integration tests for user endpoints
+└── docker-compose.yml — Docker Compose file to orchestrate services like app and database
 
 Frontend Structure:
 
@@ -52,7 +62,7 @@ frontend/
 ├── pages/
 │ ├── Index.tsx — Main landing page
 │ ├── Header.tsx — Application header component
-| ├── About.tsx — About component
+| ├── AboutPage.tsx — AboutPage component
 | ├── NotFound.tsx — NotFound component
 │
 ├── types/
@@ -97,7 +107,7 @@ npm start
 
 Alternatively, from the root folder you can run:
 
-npm install
+npm install 
 
 npm start
 
