@@ -46,13 +46,19 @@ export const loginUser = async (req, res) => {
       { expiresIn: '2h' }
     );
 
-    res.json({ token, user: { id: user.id, name: user.name, role: user.role } });
+    return res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+      },
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Login failed' });
+    console.error('Login error:', error);
+    return res.status(500).json({ error: 'Login failed' });
   }
 };
-
 
 export const getUserHistory = async (req, res) => {
   try {

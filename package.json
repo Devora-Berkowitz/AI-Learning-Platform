@@ -21,10 +21,10 @@
     "prisma": "^6.10.1"
   },
   "devDependencies": {
+    "concurrently": "^9.2.0",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
-    "concurrently": "^9.2.0"
+    "typescript": "^5.8.3"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

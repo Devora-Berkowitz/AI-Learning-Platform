@@ -2,16 +2,17 @@ import axios from 'axios';
 import { User, Prompt, Category, SubCategory } from '@/types/types';
 
 const API = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: process.env.NODE_ENV === 'production'
+    ? 'https://ai-learning-platform-production-db30.up.railway.app'
+    : 'http://localhost:3000',
+  withCredentials: true,
 });
 
 // Interceptor to add Authorization header with JWT if it exists
-
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('learning_platform_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
-    console.log('[Axios] Authorization header added:', config.headers.Authorization);
   } else {
     console.warn('[Axios] No token found in localStorage');
   }

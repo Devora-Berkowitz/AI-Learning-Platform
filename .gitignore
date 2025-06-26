@@ -68,7 +68,7 @@ web_modules/
 .next/
 out/
 .nuxt/
-dist/
+# dist/
 .vuepress/dist/
 .temp/
 **/.vitepress/dist/

@@ -3,7 +3,6 @@ import { createUser, getUserHistory, getUsers, loginUser } from '../controllers/
 import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
-
 /**
  * @swagger
  * tags:

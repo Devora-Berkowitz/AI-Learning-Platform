@@ -150,7 +150,7 @@ docker-compose down
 
 5. Assumptions
 
-Sample .env example file: PORT=3000,  DATABASE_URL,  OPENAI_API_KEY.
+Sample .env backend example file: DATABASE_URL,  OPENAI_API_KEY, JWT_SECRET.
 
 Users are uniquely identified by their ID numbers.
 
