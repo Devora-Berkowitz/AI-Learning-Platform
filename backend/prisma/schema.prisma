@@ -8,11 +8,11 @@ generator client {
 }
 
 model User {
-  id       String  @id
-  name     String
-  phone    String
-  role     String    @default("user") 
-  prompts  Prompt[]
+  id        String  @id
+  name      String
+  phone     String
+  role      String  @default("user") 
+  prompts   Prompt[]
 }
 
 model Category {
