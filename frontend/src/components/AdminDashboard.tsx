@@ -34,7 +34,7 @@ const AdminDashboard: React.FC = () => {
 
   const filteredUsers = users.filter(user =>
     (user.name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-    (user.idNumber || '').includes(searchTerm)
+    (user.id || '').includes(searchTerm)
   );
   const filteredPrompts = prompts.filter(prompt =>
     (prompt.prompt?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||

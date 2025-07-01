@@ -65,7 +65,7 @@ const LearningDashboard: React.FC = () => {
     }
     setIsGenerating(true);
     try {
-      const res = await sendPrompt(user.id, selectedCategory, selectedSubCategory, prompt);
+      const res = await sendPrompt(selectedCategory, selectedSubCategory, prompt);
       setResponse(res.response);
       setUserPrompts(prev => [res, ...prev]);
       toast({

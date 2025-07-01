@@ -1,8 +1,9 @@
 import express from 'express';
-import { createUser, getUserHistory, getUsers, loginUser } from '../controllers/userController.js';
+import { createUser, getUserHistory, getUsers, loginUser, refreshAccessToken } from '../controllers/userController.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+
 /**
  * @swagger
  * tags:
@@ -21,12 +22,6 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: List of users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
  */
 router.get('/', authenticateToken, getUsers);
 
@@ -36,30 +31,6 @@ router.get('/', authenticateToken, getUsers);
  *   post:
  *     tags: [Users]
  *     summary: Create a new user
- *     requestBody:
- *       description: User data
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - phone
- *               - password
- *             properties:
- *               name:
- *                 type: string
- *                 example: "John Doe"
- *               phone:
- *                 type: string
- *                 example: "0501234567"
- *               password:
- *                 type: string
- *                 example: "password123"
- *     responses:
- *       200:
- *         description: User created successfully
  */
 router.post('/', createUser);
 
@@ -69,40 +40,38 @@ router.post('/', createUser);
  *   post:
  *     tags: [Users]
  *     summary: User login by ID
+ */
+router.post('/login', loginUser);
+
+/**
+ * @swagger
+ * /users/refresh:
+ *   post:
+ *     tags: [Users]
+ *     summary: Refresh access token
  *     requestBody:
- *       description: User login credentials
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             required:
- *               - id
+ *               - refreshToken
  *             properties:
- *               id:
+ *               refreshToken:
  *                 type: string
- *                 example: "123456789"
  *     responses:
  *       200:
- *         description: Login successful, returns token and user info
+ *         description: New access token
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 token:
+ *                 accessToken:
  *                   type: string
- *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     name:
- *                       type: string
- *                     role:
- *                       type: string
  */
-router.post('/login', loginUser);
+router.post('/refresh', refreshAccessToken);
 
 /**
  * @swagger
@@ -119,17 +88,6 @@ router.post('/login', loginUser);
  *         description: User ID
  *         schema:
  *           type: string
- *     responses:
- *       200:
- *         description: User history data
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *       401:
- *         description: Unauthorized
  */
 router.get('/:id/history', authenticateToken, getUserHistory);
 
