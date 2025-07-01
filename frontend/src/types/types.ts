@@ -2,10 +2,8 @@ export interface User {
   id: string;
   name: string;
   phone: string;
-  idNumber: string;
   role: string; 
   created_at: string;
-  isAdmin?: boolean;
 }
 
 export interface Category {
@@ -21,7 +19,7 @@ export interface SubCategory {
 
 export interface Prompt {
   id: string;
-  user_name;
+  user_name: string;          
   user_id: string;
   user_phone: string;
   category_id: string;
@@ -37,4 +35,10 @@ export interface LearningSession {
   category: Category;
   subCategory: SubCategory;
   prompt: string;
+}
+
+export interface LoginResponse {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
 }

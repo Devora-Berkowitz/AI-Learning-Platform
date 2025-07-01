@@ -148,9 +148,20 @@ To stop the container:
 
 docker-compose down
 
-5. Assumptions
+5. Sample .env example file:
 
-Sample .env backend example file: DATABASE_URL,  OPENAI_API_KEY, JWT_SECRET.
+# Backend
+PORT=3000
+DATABASE_URL=postgresql://user:password@localhost:5432/your_db_name
+JWT_SECRET=your_jwt_secret_key
+JWT_REFRESH_SECRET=your_jwt_refresh_secret_key
+OPENAI_API_KEY=your_openai_key
+CLIENT_URL=http://localhost:8080
+
+# Frontend
+VITE_API_URL=http://localhost:3000
+
+6. Assumptions
 
 Users are uniquely identified by their ID numbers.
 

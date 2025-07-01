@@ -6,19 +6,20 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/com
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { loginUser } from '@/api/api';
+import type { LoginResponse } from '@/types/types';
 import { useUser } from '../components/UserContext';
 
 const Login = () => {
-  const [idNumber, setIdNumber] = useState('');
+  const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { setUser, setToken } = useUser();
 
-  const validate = () => {
-    if (!/^[0-9]{9,}$/.test(idNumber.trim())) {
-      setError('ID must be numeric and at least 9 digits');
+  const validate = (): boolean => {
+    if (!userId.trim()) {
+      setError('User ID is required');
       return false;
     }
     setError('');
@@ -31,11 +32,14 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const { user, token } = await loginUser(idNumber.trim());
+      const { user, accessToken, refreshToken }: LoginResponse = await loginUser(userId.trim());
 
       localStorage.setItem('learning_platform_current_user', JSON.stringify(user));
-      localStorage.setItem('learning_platform_token', token);
+      localStorage.setItem('learning_platform_token', accessToken); 
+      localStorage.setItem('learning_platform_refresh_token', refreshToken);
+
       setUser(user);
+      setToken(accessToken);
 
       toast({ title: 'Welcome!', description: `Hello ${user.name}` });
 
@@ -44,8 +48,13 @@ const Login = () => {
       } else {
         navigate('/learning');
       }
-    } catch {
-      toast({ title: 'Error', description: 'Server error. Please try again later.', variant: 'destructive' });
+    } catch (err) {
+      console.error('Login error:', err);
+      toast({
+        title: 'Login Failed',
+        description: 'Server error. Please try again later.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -56,13 +65,17 @@ const Login = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle>Login</CardTitle>
-          <CardDescription>Enter your ID number to access your account</CardDescription>
+          <CardDescription>Enter your User ID to access your account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <Label>ID Number</Label>
-              <Input value={idNumber} onChange={(e) => setIdNumber(e.target.value)} />
+              <Label>User ID</Label>
+              <Input
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                autoComplete="off"
+              />
               {error && <p className="text-red-500 text-sm">{error}</p>}
             </div>
             <Button

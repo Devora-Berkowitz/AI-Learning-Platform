@@ -2,29 +2,26 @@ import axios from 'axios';
 import { User, Prompt, Category, SubCategory } from '@/types/types';
 
 const API = axios.create({
-  baseURL: process.env.NODE_ENV === 'production'
-    ? 'https://ai-learning-platform-production-db30.up.railway.app'
-    : 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
 });
 
 // Interceptor to add Authorization header with JWT if it exists
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem('learning_platform_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  } else {
-    console.warn('[Axios] No token found in localStorage');
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('learning_platform_token');
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      console.warn('[Axios] No token found in localStorage');
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
-
-// =================== Types ===================
-
-type LoginResponse = {
-  user: User;
-  token: string;
-};
+);
 
 // =================== Users ===================
 
@@ -37,9 +34,11 @@ export const createUser = async (
   return data;
 };
 
+import type { LoginResponse } from '../types/types';
+
 export const loginUser = async (id: string): Promise<LoginResponse> => {
-  const { data } = await API.post<LoginResponse>('/users/login', { id });
-  return data;
+  const response = await API.post<LoginResponse>('/users/login', { id });
+  return response.data;
 };
 
 export const getUsers = async (): Promise<User[]> => {
@@ -71,13 +70,11 @@ export const getSubCategories = async (
 // =================== Prompt ===================
 
 export const sendPrompt = async (
-  userId: string,
   categoryId: string,
   subCategoryId: string,
   prompt: string
 ): Promise<Prompt> => {
   const { data } = await API.post<Prompt>('/prompt', {
-    userId,
     categoryId,
     subCategoryId,
     prompt,

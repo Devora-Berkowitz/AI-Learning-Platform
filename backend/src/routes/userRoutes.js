@@ -1,8 +1,15 @@
 import express from 'express';
-import { createUser, getUserHistory, getUsers, loginUser } from '../controllers/userController.js';
+import {
+  createUser,
+  getUserHistory,
+  getUsers,
+  loginUser,
+  refreshAccessToken,
+} from '../controllers/userController.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
+
 /**
  * @swagger
  * tags:
@@ -15,7 +22,8 @@ const router = express.Router();
  * /users:
  *   get:
  *     tags: [Users]
- *     summary: Get all users (requires authentication)
+ *     summary: Get all users
+ *     description: Returns a list of all users (admin only)
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -26,7 +34,9 @@ const router = express.Router();
  *             schema:
  *               type: array
  *               items:
- *                 type: object
+ *                 $ref: '#/components/schemas/User'
+ *       403:
+ *         description: Access denied
  */
 router.get('/', authenticateToken, getUsers);
 
@@ -36,30 +46,24 @@ router.get('/', authenticateToken, getUsers);
  *   post:
  *     tags: [Users]
  *     summary: Create a new user
+ *     description: Registers a new user with ID, name, and phone
  *     requestBody:
- *       description: User data
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - phone
- *               - password
- *             properties:
- *               name:
- *                 type: string
- *                 example: "John Doe"
- *               phone:
- *                 type: string
- *                 example: "0501234567"
- *               password:
- *                 type: string
- *                 example: "password123"
+ *             $ref: '#/components/schemas/UserInput'
  *     responses:
- *       200:
- *         description: User created successfully
+ *       201:
+ *         description: User created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Validation error
+ *       409:
+ *         description: User already exists
  */
 router.post('/', createUser);
 
@@ -69,8 +73,8 @@ router.post('/', createUser);
  *   post:
  *     tags: [Users]
  *     summary: User login by ID
+ *     description: Login using ID and receive access and refresh tokens
  *     requestBody:
- *       description: User login credentials
  *       required: true
  *       content:
  *         application/json:
@@ -81,35 +85,67 @@ router.post('/', createUser);
  *             properties:
  *               id:
  *                 type: string
- *                 example: "123456789"
  *     responses:
  *       200:
- *         description: Login successful, returns token and user info
+ *         description: Successful login
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 token:
+ *                 accessToken:
+ *                   type: string
+ *                 refreshToken:
  *                   type: string
  *                 user:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                     name:
- *                       type: string
- *                     role:
- *                       type: string
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: User not found
  */
 router.post('/login', loginUser);
+
+/**
+ * @swagger
+ * /users/refresh:
+ *   post:
+ *     tags: [Users]
+ *     summary: Refresh access token
+ *     description: Use a refresh token to obtain a new access token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: New access token issued
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *       403:
+ *         description: Invalid or expired refresh token
+ */
+router.post('/refresh', refreshAccessToken);
 
 /**
  * @swagger
  * /users/{id}/history:
  *   get:
  *     tags: [Users]
- *     summary: Get user history by user ID (requires authentication)
+ *     summary: Get user history by ID
+ *     description: Returns prompt history of a user. Only the user or admin can access this.
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -121,15 +157,17 @@ router.post('/login', loginUser);
  *           type: string
  *     responses:
  *       200:
- *         description: User history data
+ *         description: List of prompts and related data
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *       401:
- *         description: Unauthorized
+ *                 $ref: '#/components/schemas/UserHistory'
+ *       403:
+ *         description: Unauthorized access
+ *       500:
+ *         description: Server error
  */
 router.get('/:id/history', authenticateToken, getUserHistory);
 

@@ -4,24 +4,23 @@ export const getCategories = async (req, res) => {
   try {
     const categories = await prisma.category.findMany();
     res.json(categories);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to get categories' });
+  } catch (err) {
+    console.error('Error fetching categories:', err);
+    res.status(500).json({ error: 'Could not fetch categories, please try again later' });
   }
 };
 
 export const getSubCategories = async (req, res) => {
+  const { id } = req.params;
+  if (!id) return res.status(400).json({ error: 'Category ID is required' });
+
   try {
-    const { id } = req.params;
-
-    if (!id) {
-      return res.status(400).json({ error: 'Category ID is required' });
-    }
-
     const subCategories = await prisma.subCategory.findMany({
       where: { categoryId: Number(id) },
     });
     res.json(subCategories);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to get subcategories' });
+  } catch (err) {
+    console.error('Error fetching subcategories:', err);
+    res.status(500).json({ error: 'Could not fetch subcategories, please try again later' });
   }
 };
